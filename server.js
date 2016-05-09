@@ -1,7 +1,7 @@
 var express = require('express'),
     app = express(),
     bodyParser = require('body-parser'),
-    cardsRouter = require('./src/routes/cards'),
+    cardsRouter = require('./src/routes/cards.routes'),
     port = process.env.PORT || 3333;
 //var config = require('./config.js');
 app.use(bodyParser.json());

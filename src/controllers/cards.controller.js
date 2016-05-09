@@ -1,5 +1,6 @@
 var fs = require('fs'),
   path = require('path'),
+  mapper = require('../mappers/cards.mapper').mapper,
   file = path.join(__dirname, "..", "cards.json"),
   json = '{ "_data": [] }',
   isFetched = false;
@@ -13,13 +14,12 @@ catch (e){}
 var cards = JSON.parse(json);
 
 function list() {
-  return cards;
+  return mapper(cards._data);
 }
 
 function get(id) {
-  return {
-    _data: cards._data.filter(function(a) { return parseInt(a.id) == id })
-  }
+  var card = cards._data.filter(function(a) { return parseInt(a.id) == id });
+  return mapper(card);
 }
 
 module.exports = {
