@@ -27,6 +27,7 @@ var Promise = require('promise'),
     image: Joi.string(),
     motto: Joi.string(),
     available: Joi.boolean(),
+    inProcess: Joi.boolean(),
     skills: Joi.array().min(1).items(skillSchema),
     projects: Joi.array().min(0).items(projectSchema)
   }),
