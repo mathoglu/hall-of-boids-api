@@ -4,7 +4,8 @@
   "description": "Get some boids",
   "main": "server.js",
   "scripts": {
-    "start": "./node_modules/nodemon/bin/nodemon.js server.js",
+    "start": "node server.js",
+    "dev": "./node_modules/nodemon/bin/nodemon.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Matts Höglund",
@@ -13,7 +14,10 @@
     "body-parser": "^1.15.0",
     "express": "^4.13.4",
     "joi": "^8.1.0",
-    "nodemon": "^1.9.2",
+    "morgan": "^1.7.0",
     "promise": "^7.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.9.2"
   }
 }

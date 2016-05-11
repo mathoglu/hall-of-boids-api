@@ -1,11 +1,14 @@
 var express = require('express'),
+    morgan = require('morgan'),
     app = express(),
     bodyParser = require('body-parser'),
     cardsRouter = require('./src/routes/cards.routes'),
     port = process.env.PORT || 3333;
-//var config = require('./config.js');
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(morgan('dev'));
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
