@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "./node_modules/nodemon/bin/nodemon.js",
+    "postinstall": "wget -O src/cards.json 'https://dl.dropboxusercontent.com/u/49474393/cards.json'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Matts Höglund",
