@@ -9,7 +9,9 @@ try {
   fs.accessSync(file, fs.F_OK);
   json = fs.readFileSync(file, 'utf8');
 }
-catch (e){}
+catch (e){
+  
+}
 
 var cards = JSON.parse(json);
 
