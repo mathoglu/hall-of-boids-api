@@ -11,7 +11,9 @@ function _loadFile() {
     fs.accessSync(file, fs.F_OK);
     json = fs.readFileSync(file, 'utf8');
   }
-  catch (e){}
+  catch (e){
+    console.log("file read error:",e);
+  }
 
   return JSON.parse(json);
 }
