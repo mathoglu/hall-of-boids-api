@@ -1,8 +1,6 @@
 var Promise = require('promise'),
   Joi = require('joi'),
-  dateFormat = 'YYYY/MM/DD',
   skillSchema = Joi.object().keys({
-    id: Joi.number().required(),
     rank: Joi.number(),
     name: Joi.string(),
     rating: Joi.number(),
@@ -28,7 +26,7 @@ var Promise = require('promise'),
     motto: Joi.string(),
     available: Joi.boolean(),
     inProcess: Joi.boolean(),
-    skills: Joi.array().min(1).items(skillSchema),
+    skills: Joi.array().min(0).items(skillSchema),
     projects: Joi.array().min(0).items(projectSchema)
   }),
   cardsSchema = Joi.array().min(0).items(cardSchema)
