@@ -1,32 +1,86 @@
-var fs = require('fs'),
-  path = require('path'),
-  Promise = require('promise'),
+var Promise = require('promise'),
   mapper = require('../mappers/cards.mapper').mapper,
-  file = path.join(__dirname, "..", "cards.json"),
   json = '{ "_data": [] }',
-  isFetched = false;
-
-function _loadFile() {
-  try {
-    fs.accessSync(file, fs.F_OK);
-    json = fs.readFileSync(file, 'utf8');
-  }
-  catch (e){
-    console.log("file read error:",e);
-  }
-
-  return JSON.parse(json);
-}
+  models = require('../models/index');
 
 function list() {
-  var cards = _loadFile();
-  return mapper(cards._data);
+  var employeesPromise = models.employee.findAll(
+    {
+      include: [
+        {
+          model: models.employeeSkill,
+          include: [ models.skill ]
+        },
+        models.project
+      ]
+    });
+  return buildCardsPromiseFromEmployeesPromise(employeesPromise);
 }
 
 function get(id) {
-  var cards = _loadFile();
-  var card = cards._data.filter(function(a) { return parseInt(a.id) == id });
-  return mapper(card);
+  var employeePromise = models.employee.findById(id,
+    {
+      include: [
+        {
+          model: models.employeeSkill,
+          include: [ models.skill ]
+        },
+        models.project
+      ]
+    });
+  return buildCardPromiseFromEmployeePromise(employeePromise);
+}
+
+function buildCardFromEmployee(employee) {
+  var card = {
+    id: employee.id,
+    info: {
+      firstname: employee.first_name,
+      lastname: employee.last_name,
+      title: employee.title
+    },
+    image: employee.image,
+    motto: employee.motto,
+    available: false,
+    inProcess: false,
+    skills: employee.employeeSkills.map(function(employeeSkill) {
+      return {
+        rank: employeeSkill.rank,
+        name: employeeSkill.skill.dataValues.name,
+        rating: employeeSkill.rating
+      }
+    }),
+    projects: employee.projects.map(function(project) {
+      return {
+        client: project.client,
+        current: Date.now() > Date.parse(project.duration_from) && Date.now() < Date.parse(project.duration_to),
+        description: project.description,
+        duration: {
+          from: Date.parse(project.duration_from) / 1000,
+          to: Date.parse(project.duration_to) / 1000
+        }
+      }
+    })
+  };
+  return mapper(JSON.stringify([card]));
+}
+
+function buildCardPromiseFromEmployeePromise(employeePromise) {
+  return employeePromise.then(function(employee) {
+    return buildCardFromEmployee(employee);
+  }, function(err) {
+    console.error(err);
+  });
+}
+
+function buildCardsPromiseFromEmployeesPromise(employeesPromise) {
+  return employeesPromise.then(function(employees) {
+    var cards = [];
+    for (var i = 0; i < employees.length; i++) {
+      cards.push(buildCardFromEmployee(employees[i].dataValues));
+    }
+    return Promise.all(cards);
+  });
 }
 
 module.exports = {
