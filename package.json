@@ -16,7 +16,11 @@
     "express": "^4.13.4",
     "joi": "^8.1.0",
     "morgan": "^1.7.0",
-    "promise": "^7.1.1"
+    "pg": "^5.1.0",
+    "pg-hstore": "^2.3.2",
+    "promise": "^7.1.1",
+    "sequelize": "^3.23.3",
+    "sequelize-fixtures": "^0.5.3"
   },
   "devDependencies": {
     "nodemon": "^1.9.2"
