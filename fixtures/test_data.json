@@ -1,0 +1,141 @@
+[
+  {
+    "model": "employee",
+    "data": {
+      "id": 1,
+      "first_name": "Antti",
+      "last_name": "Anttinen",
+      "title": "Consultant",
+      "motto": "Grrrrrreat!",
+      "image": "assets/images/aant.png",
+      "projects": [1,3]
+    }
+  },
+  {
+    "model": "employee",
+    "data": {
+      "id": 2,
+      "first_name": "Pekka",
+      "last_name": "Pekkanen",
+      "title": "Manager",
+      "image": "assets/images/ppek.png",
+      "motto": "Off to the castle.",
+      "projects": [2,3]
+    }
+  },
+  {
+    "model": "project",
+    "data": {
+      "id": 1,
+      "client": "STSH",
+      "description": "Älämölöä!",
+      "duration_from": "2016-02-01",
+      "duration_to": "2016-08-01",
+      "employees": [1]
+    }
+  },
+  {
+    "model": "project",
+    "data": {
+      "id": 2,
+      "client": "YAITC",
+      "description": "Naputi naputi",
+      "duration_from": "2016-03-01",
+      "duration_to": "2016-08-15",
+      "employees": [2]
+    }
+  },
+  {
+    "model": "project",
+    "data": {
+      "id": 3,
+      "client": "YASC",
+      "description": "Koodimölöä!",
+      "duration_from": "2016-09-01",
+      "duration_to": "2016-12-31",
+      "employees": [1,2]
+    }
+  },
+  {
+    "model": "skill",
+    "data": {
+      "id": 1,
+      "name": "Scala"
+    }
+  },
+  {
+    "model": "skill",
+    "data": {
+      "id": 2,
+      "name": "ReactJS"
+    }
+  },
+  {
+    "model": "skill",
+    "data": {
+      "id": 3,
+      "name": "Javascript"
+    }
+  },
+  {
+    "model": "skill",
+    "data": {
+      "id": 4,
+      "name": "Haskell"
+    }
+  },
+  {
+    "model": "employeeSkill",
+    "data": {
+      "employeeId": 1,
+      "rating": 90,
+      "rank": 1,
+      "skillId": 1
+    }
+  },
+  {
+    "model": "employeeSkill",
+    "data": {
+      "employeeId": 1,
+      "rating": 70,
+      "rank": 2,
+      "skillId": 2
+    }
+  },
+  {
+    "model": "employeeSkill",
+    "data": {
+      "employeeId": 1,
+      "rating": 80,
+      "rank": 3,
+      "skillId": 3
+    }
+  },
+  {
+    "model": "employeeSkill",
+    "data": {
+      "employeeId": 2,
+      "rating": 90,
+      "rank": 3,
+      "skillId": 2
+    }
+  },
+  {
+    "model": "employeeSkill",
+    "data": {
+      "employeeId": 2,
+      "rating": 80,
+      "rank": 3,
+      "skillId": 3
+    }
+  },
+  {
+    "model": "employeeSkill",
+    "data": {
+      "employeeId": 2,
+      "rating": 75,
+      "rank": 3,
+      "skillId": 4
+    }
+  }
+]
