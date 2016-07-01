@@ -50,7 +50,12 @@ function validateCard(card) {
 }
 
 function validateCards(cards) {
-  return validateSchema(cards, cardsSchema);
+  if (Array.isArray(cards)) {
+    return validateSchema(cards, cardsSchema);
+  }
+  else {
+    return validateCard(cards);
+  }
 }
 
 function setAvailability(card) {
