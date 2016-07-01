@@ -11,8 +11,7 @@ router.route('/')
   .get(function(req,res) {
     cardsController.list().then(
       function(cards) {
-        var flattenedCardsArray = [].concat([], cards);
-        res.json(responseMapper(flattenedCardsArray));
+        res.json(responseMapper(cards));
       },
       function(err) {
         _errorHandler(err, res, req);
