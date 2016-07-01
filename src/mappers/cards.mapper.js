@@ -36,30 +36,63 @@ function _errorHandler(err, reject) {
   reject(err);
 }
 
-function validateCards(cards) {
+function validateSchema(item, schema) {
   return new Promise(function(resolve, reject) {
-    Joi.validate(cards, cardsSchema, function(err, val) {
-      if(err) _errorHandler(err, reject)
-      resolve(val);
+    Joi.validate(item, schema, function(err, val) {
+      if (err) _errorHandler(err, reject)
+      resolve(val)
     })
   })
 }
 
+function validateCard(card) {
+  return validateSchema(card, cardSchema);
+}
+
+function validateCards(cards) {
+  return validateSchema(cards, cardsSchema);
+}
+
+function setAvailability(card) {
+  var currentProject = card.projects.filter( function(p) {return p.current }) [0];
+  if (currentProject) {
+    card.availableFrom = currentProject.duration.to
+  }
+  return card;
+}
+
+function setAvailabilities(cards) {
+  for (var i = 0; i < cards.length; i++) {
+    cards[i] = setAvailability(cards[i]);
+  }
+  return cards;
+}
+
+function cardMapper(item) {
+  return validateCard(item).then(
+    function (card) {
+      return setAvailability(card);
+    },
+    function (err) {
+      _errorHandler(err, function() {});
+    }
+  )
+}
+
 function cardsMapper(items) {
+  if (Array.isArray(items)) {
     return validateCards(items).then(
       function(cards) {
-        for(var i = 0; i < cards.length; i++) {
-          var currentProject = cards[i].projects.filter( function(p) { return p.current } )[0];
-          if(currentProject) {
-            cards[i].availableFrom = currentProject.duration.to;
-          }
-        }
-        return cards;
+        return setAvailabilities(cards);
       },
       function(err) {
         _errorHandler(err, function(){})
       }
     )
+  }
+  else {
+    return cardMapper(items);
+  }
 }
 
 

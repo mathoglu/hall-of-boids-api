@@ -62,7 +62,7 @@ function buildCardFromEmployee(employee) {
       }
     })
   };
-  return mapper(JSON.stringify([card]));
+  return mapper(JSON.stringify(card));
 }
 
 function buildCardPromiseFromEmployeePromise(employeePromise) {
