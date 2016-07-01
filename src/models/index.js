@@ -26,13 +26,25 @@ Object.keys(db).forEach(function(modelName) {
   }
 });
 
-
-sequelize.sync({force: true, match: /_test$/ }).then(function () {
-  const sequelizeFixtures = require('sequelize-fixtures');
-  sequelizeFixtures.loadFile('fixtures/*.json', db).then(function () {
-    console.log("Fixtures loaded");
+if (process.env.ENVIRONMENT === 'development') {
+  sequelize.sync({force: true}).then(function () {
+    const sequelizeFixtures = require('sequelize-fixtures');
+    var files = [
+      'fixtures/static_data/employees.json',
+      'fixtures/static_data/projects.json',
+      'fixtures/static_data/skills.json',
+      'fixtures/static_data/employee_skills.json'
+    ];
+    sequelizeFixtures.loadFiles(files, db).then(function () {
+      console.log("Fixtures loaded");
+    });
   });
-});
+}
+else if (process.env.ENVIRONMENT === 'production') {
+  sequelize.sync().then(function() {
+    console.log("Database synced");
+  })
+}
 
 
 module.exports = db;
