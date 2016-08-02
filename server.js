@@ -25,5 +25,7 @@ app.use(function(req, res, next) {
 //app.use('/api', indexRouter);
 app.use('/api/cards', cardsRouter);
 
-app.listen(port);
+var server = app.listen(port);
 require('util').log('Library hosted on port ' + port);
+
+module.exports = server;
