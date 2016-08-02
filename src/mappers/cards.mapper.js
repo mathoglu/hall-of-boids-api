@@ -27,7 +27,8 @@ var Promise = require('promise'),
     available: Joi.boolean(),
     inProcess: Joi.boolean(),
     skills: Joi.array().min(0).items(skillSchema),
-    projects: Joi.array().min(0).items(projectSchema)
+    projects: Joi.array().min(0).items(projectSchema),
+    availableFrom: Joi.date().timestamp('unix')
   }),
   cardsSchema = Joi.array().min(0).items(cardSchema)
 
@@ -38,9 +39,17 @@ function _errorHandler(err, reject) {
 
 function validateSchema(item, schema) {
   return new Promise(function(resolve, reject) {
-    Joi.validate(item, schema, function(err, val) {
-      if (err) _errorHandler(err, reject)
-      resolve(val)
+    var itemObject;
+    if (typeof item === 'string' || item instanceof String) {
+      itemObject = JSON.parse(item);
+    }
+    else {
+      itemObject = item;
+    }
+    Joi.validate(itemObject, schema, function(err, val) {
+      if (err)
+        _errorHandler(err, reject);
+      resolve(itemObject)
     })
   })
 }
@@ -103,6 +112,7 @@ function cardsMapper(items) {
 
 
 module.exports = {
+  schema: cardSchema,
   mapper: cardsMapper,
   validate: validateCards
 }
