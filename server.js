@@ -4,6 +4,9 @@ var express = require('express'),
     app = express(),
     bodyParser = require('body-parser'),
     cardsRouter = require('./src/routes/cards.routes'),
+    employeesRouter = require('./src/routes/employees.routes'),
+    projectsRouter = require('./src/routes/projects.routes'),
+    skillsRouter = require('./src/routes/skills.routes'),
     port = process.env.PORT || 3333;
 
 app.use(bodyParser.json());
@@ -24,6 +27,9 @@ app.use(function(req, res, next) {
 
 //app.use('/api', indexRouter);
 app.use('/api/cards', cardsRouter);
+app.use('/api/employees', employeesRouter);
+app.use('/api/projects', projectsRouter);
+app.use('/api/skills', skillsRouter);
 
 var server = app.listen(port);
 require('util').log('Library hosted on port ' + port);
