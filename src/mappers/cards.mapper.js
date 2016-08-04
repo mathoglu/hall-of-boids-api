@@ -6,7 +6,7 @@ var Promise = require('promise'),
     rating: Joi.number(),
     category: Joi.number()
   }),
-  projectSchema = Joi.object().keys({
+  cardProjectSchema = Joi.object().keys({
     client: Joi.string().required(),
     current: Joi.boolean(),
     description: Joi.string(),
@@ -27,7 +27,7 @@ var Promise = require('promise'),
     available: Joi.boolean(),
     inProcess: Joi.boolean(),
     skills: Joi.array().min(0).items(skillSchema),
-    projects: Joi.array().min(0).items(projectSchema),
+    projects: Joi.array().min(0).items(cardProjectSchema),
     availableFrom: Joi.date().timestamp('unix')
   }),
   cardsSchema = Joi.array().min(0).items(cardSchema)
