@@ -7,6 +7,13 @@ var sequelize = new Sequelize(config.database.name,
   config.database.password,
   {dialect: config.database.dialect});
 
+if (process.env.ENVIRONMENT === 'test') {
+  sequelize = new Sequelize(config.test_database.name,
+  config.test_database.user,
+  config.test_database.password,
+    {dialect: config.test_database.dialect});
+}
+
 var db = {};
 
 // import and associate models
