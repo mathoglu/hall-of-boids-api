@@ -91,8 +91,9 @@ describe('ProjectsRoutes', function() {
       }
     );
     it('should return a single project on /api/projects/:project_id GET', function (done) {
+      var projectId = 1;
       chai.request(server)
-        .get(apiUrl + '1')
+        .get(apiUrl + projectId)
         .end(function(err, res) {
           res.should.have.status(200);
           res.body._data.should.not.be.a('array');
@@ -109,4 +110,83 @@ describe('ProjectsRoutes', function() {
         });
     });
   });
+
+  describe('#patch(id)', function() {
+    beforeEach(
+      function (done) {
+        initialiseDatabaseWithFixtures(done);
+      },
+      function(err) {
+        console.error("Database initialization failed");
+        console.error(err);
+      }
+    );
+    it('should update the record corresponding to the id with the given data', function(done) {
+      var projectId = 1;
+      var project = {
+        client: "New client",
+        description: "New description",
+        duration_from: new Date().toJSON().slice(0,10),
+        duration_to: new Date().toJSON().slice(0,10)
+      };
+      chai.request(server)
+        .patch(apiUrl + projectId)
+        .send(project)
+        .end(function(err, res) {
+          res.should.have.status(200);
+          db.project.findById(projectId).then(function(dbProject) {
+            dbProject.client.should.equal(project.client);
+            dbProject.description.should.equal(project.description);
+            dbProject.duration_from.toString().should.equal(new Date(project.duration_from).toString());
+            dbProject.duration_to.toString().should.equal(new Date(project.duration_to).toString());
+            done();
+          },
+          function(err) {
+            done(err);
+          })
+        });
+    })
+  });
+
+  describe('#post(project)', function() {
+    beforeEach(
+      function(done) {
+        initialiseDatabaseWithFixtures(done);
+      },
+      function(err) {
+        console.error("Database initialisation failed");
+        console.error(err);
+        console.error(err.stack);
+      }
+    );
+
+    it('should create a project with the given data', function(done) {
+      var project = {
+        client: "Testiklientti",
+        description: "Testaamista",
+        duration_from: new Date().toJSON().slice(0,10),
+        duration_to: new Date().toJSON().slice(0, 10),
+        employees: [1]
+      };
+      chai.request(server)
+        .post(apiUrl)
+        .send(project)
+        .end(function(err, res) {
+          res.should.have.status(200);
+          res.body.should.have._data;
+          res.body._data.should.be.a('number');
+          var projectId = res.body._data;
+          db.project.findById(projectId).then(function(dbProject) {
+            dbProject.client.should.equal(project.client);
+            dbProject.description.should.equal(project.description);
+            dbProject.duration_from.should.equal(project.duration_from);
+            dbProject.duration_to.should.equal(project.duration_to);
+            done();
+          },
+          function (err) {
+            done(err);
+          });
+        });
+    })
+  })
 });

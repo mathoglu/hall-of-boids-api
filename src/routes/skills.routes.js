@@ -31,4 +31,16 @@ router.route('/:skill_id')
     );
   });
 
+router.route('/:skill_id')
+  .patch(function(req, res) {
+    skillsController.patch(req.params.skill_id, req.body).then(
+      function (skill) {
+        res.json(responseMapper(skill));
+      },
+      function(err) {
+        _errorHandler(err, res, req);
+      }
+    )
+  });
+
 module.exports = router;

@@ -38,11 +38,55 @@ function get(id) {
 }
 
 function post(employee) {
-  var employeeCreatePromise = models.employee.findOrCreate();
+  var employeeCreatePromise = models.employee.findOrCreate(
+    {
+      where: {
+        first_name: employee.first_name,
+        last_name: employee.last_name
+      },
+      defaults: employee
+    });
+  return employeeCreatePromise.then(function(employee) {
+    return employee[0].dataValues.id;
+  })
 }
 
+function patch(employeeId, employeeData) {
+  if ("id" in employeeData) {
+    delete employeeData.id;
+  }
+  return models.employee.update(employeeData, {where: {id: employeeId}}).then(
+    function(data) {
+      console.log(data);
+    },
+    function (err) {
+      console.error(err);
+    }
+  );
+}
+
+function remove(employeeId) {
+  // first destroy the employee skill instances for the employee
+  // before destroying the employee instance
+  return models.employeeSkill.destroy({where: {employeeId: employeeId}}).then(function() {
+    return models.employee.destroy({where: {id: employeeId}}).then(
+      function () {
+        console.log("destroyed");
+      },
+      function (err) {
+        console.error(err);
+      }
+    )
+  },
+  function(err) {
+    console.error(err);
+  });
+}
 
 module.exports = {
   list: list,
-  get: get
-}
+  get: get,
+  post: post,
+  patch: patch,
+  remove: remove
+};

@@ -24,6 +24,42 @@ function get(id) {
     });
 }
 
+function post(skill) {
+  var skillCreatePromise = models.employee.findOrCreate(
+    {
+      where: {
+        name: skill.name
+      },
+      defaults: skill
+    });
+  return skillCreatePromise.then(function(skill) {
+    return skill[0].dataValues.id;
+  });
+}
+
+function patch(skillId, skillData) {
+  if ("id" in skillData) {
+    delete skillData.id;
+  }
+  return models.skill.update(skillData, {where: {id: skillId}}).then(
+    function(data) {
+    },
+    function (err) {
+      console.error(err);
+    }
+  )
+}
+
+function remove(skillId) {
+  return models.project.destroy({where: {skillId: skillId}}).then(
+    function() {
+    },
+    function(err) {
+      console.error(err);
+    }
+  )
+}
+
 function convertDurationsToUnixTimestamp(skill) {
   skill.duration_from = skill.duration_from.getTime() / 1000;
   skill.duration_to = skill.duration_to.getTime() / 1000;
@@ -33,5 +69,8 @@ function convertDurationsToUnixTimestamp(skill) {
 
 module.exports = {
   list: list,
-  get: get
+  get: get,
+  post: post,
+  patch: patch,
+  remove: remove
 }

@@ -31,4 +31,37 @@ router.route('/:employee_id')
     );
   });
 
+router.route('/:employee_id')
+  .patch(function(req, res) {
+    employeesController.patch(req.params.employee_id, req.body).then(function (data) {
+        res.json(responseMapper(data));
+      },
+      function(err) {
+        _errorHandler(err, res, req);
+      }
+    )
+  });
+
+router.route('/:employee_id')
+  .delete(function(req, res) {
+    employeesController.remove(req.params.employee_id, req.body).then(function(data) {
+      res.json(responseMapper(data));
+    },
+    function(err) {
+      _errorHandler(err,res,req);
+    })
+  });
+
+router.route('/')
+  .post(function(req, res) {
+    employeesController.post(req.body).then(function(employeeId) {
+      res.status(200).json(responseMapper(employeeId));
+    },
+    function(err) {
+      _errorHandler(err, res, req);
+    })
+  });
+
+
+
 module.exports = router;

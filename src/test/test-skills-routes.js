@@ -48,7 +48,9 @@ describe('SkillsRoutes', function() {
         initialiseDatabaseWithFixtures(done);
       },
       function(err) {
-
+        console.error("Fixture loading failed");
+        console.error(err);
+        console.error(err.stack);
       }
     );
     it('should list all skills on /api/skills/ GET', function (done) {
@@ -109,4 +111,33 @@ describe('SkillsRoutes', function() {
         });
     });
   });
+  describe('#patch(id)', function() {
+    beforeEach(
+      function (done) {
+        initialiseDatabaseWithFixtures(done);
+      },
+      function(err) {
+        console.error("Database initialization failed");
+        console.error(err);
+      }
+    );
+    it('should update the record corresponding to the id with the given data', function(done) {
+      var skillId = 1;
+      var skill = {
+        name: "New Skillname"
+      };
+      chai.request(server)
+        .patch(apiUrl + '1')
+        .send(skill)
+        .end(function(err, res) {
+          res.should.have.status(200);
+          db.skill.findById(skillId).then(function(dbEmployee) {
+            dbEmployee.name.should.equal(skill.name);
+            done();
+          }, function(err) {
+            done(err);
+          });
+        })
+    })
+  })
 });
