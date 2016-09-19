@@ -53,4 +53,16 @@ router.route('/:project_id')
     );
   });
 
+router.route('/:project_id')
+  .delete(function(req,res) {
+    projectsController.remove(req.params.project_id).then(
+      function (data) {
+        res.json(responseMapper(data))
+      },
+      function(err) {
+        _errorHandler(err, res, req);
+      }
+    )
+  });
+
 module.exports = router;
