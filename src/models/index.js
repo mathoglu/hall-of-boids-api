@@ -44,6 +44,19 @@ if (process.env.ENVIRONMENT === 'development') {
     ];
     sequelizeFixtures.loadFiles(files, db).then(function () {
       console.log("Fixtures loaded");
+      fs.readFile('fixtures/static_data/employee_images.json', 'utf-8', function(err, dataJson) {
+        var dataArray = JSON.parse(dataJson);
+        for (var i = 0; i < dataArray.length; i++) {
+          var id = dataArray[i].employee_id;
+          var b64data = dataArray[i].data;
+          db.employee.update({image: b64data}, {where: {id: id}}).then(function() {
+            console.log("Image uploaded to database");
+          }).catch(function(err) {
+            console.error("Error loading image to database");
+            console.error(err);
+          });
+        }
+      });
     });
   });
 }

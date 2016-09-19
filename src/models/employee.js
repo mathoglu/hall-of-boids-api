@@ -14,7 +14,8 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.STRING
     },
     image: {
-      type: DataTypes.STRING
+      type: DataTypes.TEXT,
+      allowNull: true
     },
     motto: {
       type: DataTypes.TEXT
