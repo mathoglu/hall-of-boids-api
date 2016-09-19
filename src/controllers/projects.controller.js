@@ -68,7 +68,7 @@ function patch(projectId, projectData) {
 }
 
 function remove(projectId) {
-  return models.project.destroy({where: {projectId: projectId}}).then(
+  return models.project.destroy({where: {id: projectId}}).then(
     function() {
       console.log("destroyed");
     },
