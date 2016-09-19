@@ -27,8 +27,10 @@ function get(id) {
         },
         models.project
       ]
-    });
-  return buildCardPromiseFromEmployeePromise(employeePromise);
+    }).then(function(employee) {
+      return [employee];
+  });
+  return buildCardsPromiseFromEmployeesPromise(employeePromise);
 }
 
 function buildCardFromEmployee(employee) {
@@ -62,6 +64,10 @@ function buildCardFromEmployee(employee) {
       }
     })
   };
+  var hasCurrentProject = card.projects.some(function(project) {
+    return project.current;
+  });
+  card.available = !hasCurrentProject;
   return mapper(JSON.stringify(card));
 }
 
