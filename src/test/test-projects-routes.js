@@ -179,14 +179,43 @@ describe('ProjectsRoutes', function() {
           db.project.findById(projectId).then(function(dbProject) {
             dbProject.client.should.equal(project.client);
             dbProject.description.should.equal(project.description);
-            dbProject.duration_from.should.equal(project.duration_from);
-            dbProject.duration_to.should.equal(project.duration_to);
+            dbProject.duration_from.toString().should.equal(new Date(project.duration_from).toString());
+            dbProject.duration_to.toString().should.equal(new Date(project.duration_to).toString());
             done();
           },
           function (err) {
             done(err);
           });
         });
+    })
+  });
+
+  describe('#delete(project)', function () {
+    beforeEach(
+      function(done) {
+        initialiseDatabaseWithFixtures(done);
+      },
+      function(err) {
+        console.error("Database initialisation failed");
+        console.error(err);
+        console.error(err.stack);
+      }
+    );
+
+    it('should delete the project record corresponding to the id', function (done) {
+      var projectId = 1;
+      chai.request(server)
+        .delete(apiUrl + projectId)
+        .end(function(err, res) {
+          res.should.have.status(200);
+          db.project.findAll({where: {id: projectId}}).then(function(dbProjects) {
+            dbProjects.length.should.equal(0);
+            done();
+          },
+          function(err) {
+            done(err);
+          })
+        })
     })
   })
 });
