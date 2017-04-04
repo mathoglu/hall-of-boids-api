@@ -17,7 +17,7 @@ router.route('/')
         _errorHandler(err, res, req);
       }
     );
-  })
+  });
 
 router.route('/:card_id')
   .get(function(req,res) {
@@ -29,6 +29,6 @@ router.route('/:card_id')
         _errorHandler(err, res, req);
       }
     );
-  })
+  });
 
 module.exports = router;

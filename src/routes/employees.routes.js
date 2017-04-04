@@ -4,6 +4,7 @@ const express = require('express'),
   router = express.Router();
 
 function _errorHandler(err, res, req) {
+  console.error(err);
   res.status(500).json(responseMapper([], err));
 }
 
@@ -11,6 +12,15 @@ router.route('/')
   .get(function(req,res) {
     employeesController.list().then(
       function(employees) {
+        let employeesWithNoImage = [];
+        if (req.query.no_image) {
+          console.log(employees[0]);
+          employees.forEach((employee) => {
+            delete employee.image;
+            employeesWithNoImage.push(employee);
+          });
+          employees = employeesWithNoImage;
+        }
         res.json(responseMapper(employees));
       },
       function(err) {
@@ -23,6 +33,9 @@ router.route('/:employee_id')
   .get(function(req,res) {
     employeesController.get(req.params.employee_id).then(
       function (employee) {
+        if (req.query.no_image) {
+          delete employee.image;
+        }
         res.json(responseMapper(employee));
       },
       function (err) {

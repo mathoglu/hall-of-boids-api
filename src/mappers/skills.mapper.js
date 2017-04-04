@@ -1,7 +1,8 @@
-var Promise = require('promise'),
+const Promise = require('promise'),
   Joi = require('joi'),
   skillSchema = Joi.object().keys({
     id: Joi.number().required(),
+    employee_id: Joi.number().required(),
     rank: Joi.number(),
     name: Joi.string().required(),
     rating: Joi.number(),
@@ -16,7 +17,7 @@ function _errorHandler(err, reject) {
 
 function validateSchema(item, schema) {
   return new Promise(function(resolve, reject) {
-    var itemObject;
+    let itemObject;
     if (typeof item === 'string' || item instanceof String) {
       itemObject = JSON.parse(item);
     }

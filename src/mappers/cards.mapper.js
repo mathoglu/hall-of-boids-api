@@ -1,10 +1,8 @@
 var Promise = require('promise'),
   Joi = require('joi'),
   skillSchema = Joi.object().keys({
-    rank: Joi.number(),
     name: Joi.string(),
-    rating: Joi.number(),
-    category: Joi.number()
+    rating: Joi.number()
   }),
   cardProjectSchema = Joi.object().keys({
     client: Joi.string().required(),
@@ -30,7 +28,7 @@ var Promise = require('promise'),
     projects: Joi.array().min(0).items(cardProjectSchema),
     availableFrom: Joi.date().timestamp('unix')
   }),
-  cardsSchema = Joi.array().min(0).items(cardSchema)
+  cardsSchema = Joi.array().min(0).items(cardSchema);
 
 function _errorHandler(err, reject) {
   console.error(err.name, err.details);
@@ -115,4 +113,4 @@ module.exports = {
   schema: cardSchema,
   mapper: cardsMapper,
   validate: validateCards
-}
+};

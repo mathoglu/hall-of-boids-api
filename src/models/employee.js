@@ -2,6 +2,11 @@
 
 module.exports = function (sequelize, DataTypes) {
   var Employee = sequelize.define('employee', {
+    id: {
+      type: DataTypes.BIGINT,
+      primaryKey: true,
+      autoIncrement: true
+    },
     first_name: {
       type: DataTypes.STRING,
       field: 'first_name'
@@ -20,16 +25,10 @@ module.exports = function (sequelize, DataTypes) {
     motto: {
       type: DataTypes.TEXT
     }
-  }, {
-    classMethods: {
-      associate: function(models) {
-        Employee.hasMany(models.employeeSkill);
-        Employee.belongsToMany(models.project, {
-          through: "employeeProjects",
-          foreign_key: "employeeId"
-        });
-      }
+  },
+    {
+      initialAutoIncrement: 100
     }
-  });
+  );
   return Employee;
 };

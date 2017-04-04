@@ -4,7 +4,7 @@ var Promise = require('promise'),
   models = require('../models/index');
 
 function list() {
-  var projectsPromise = models.project.findAll(
+  let projectsPromise = models.project.findAll(
     {
       include: [
         {
@@ -23,15 +23,9 @@ function list() {
     });
 }
 
-function get(id) {
-  return models.project.findById(id,
-    {
-      include: [
-        models.skill
-      ]
-    }
-  ).then( function (project) {
-    return convertDurationsToUnixTimestamp(project.dataValues);
+function get(employee_id) {
+  return models.project.findAll({where: {employee_id: employee_id}}).then( function (projects) {
+    return projects.map((project) => convertDurationsToUnixTimestamp(project.dataValues));
   },
   function(err) {
     console.error(err);
@@ -39,15 +33,19 @@ function get(id) {
 }
 
 function post(project) {
-  var projectCreatePromise = models.project.findOrCreate( {
-    where: {
-      client: project.client,
-      description: project.description,
-      duration_from: project.duration_from,
-      duration_to: project.duration_to
-    },
-    defaults: project
-  });
+  let projectCreatePromise = models.project.findOrCreate( {
+      where: {
+        client: project.client,
+        employee_id: project.employee_id,
+        description: project.description,
+        duration_from: project.duration_from,
+        duration_to: project.duration_to
+      },
+      defaults: project
+    })
+    .catch(err => {
+      console.error(err)
+    });
   return projectCreatePromise.then(function(project) {
     return project[0].dataValues.id;
   })
@@ -62,7 +60,7 @@ function patch(projectId, projectData) {
       console.log(data);
     },
     function(err) {
-      console.log(err);
+      console.error(err);
     }
   )
 }
@@ -79,8 +77,8 @@ function remove(projectId) {
 }
 
 function convertDurationsToUnixTimestamp(project) {
-  project.duration_from = project.duration_from.getTime() / 1000;
-  project.duration_to = project.duration_to.getTime() / 1000;
+  project.duration_from = project.duration_from.getTime();
+  project.duration_to = project.duration_to.getTime();
   return project;
 }
 
@@ -91,4 +89,4 @@ module.exports = {
   post: post,
   patch: patch,
   remove: remove
-}
+};

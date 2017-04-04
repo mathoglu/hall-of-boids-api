@@ -29,9 +29,9 @@ router.route('/')
     })
   });
 
-router.route('/:project_id')
+router.route('/:employee_id')
   .get(function(req,res) {
-    projectsController.get(req.params.project_id).then(
+    projectsController.get(req.params.employee_id).then(
       function (project) {
         res.json(responseMapper(project));
       },

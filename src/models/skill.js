@@ -2,17 +2,27 @@
 
 module.exports = function (sequelize, DataTypes) {
   var Skill = sequelize.define('skill', {
+    id: {
+      type: DataTypes.BIGINT,
+      primaryKey: true,
+      autoIncrement: true
+    },
+    employee_id: {
+      type: DataTypes.INTEGER,
+      field: 'employee_id'
+    },
     name: {
       type: DataTypes.STRING,
       field: 'name'
+    },
+    rating: {
+      type: DataTypes.INTEGER,
+      field: 'rating'
     }
   },
     {
-      classMethods: {
-        associate: function(models) {
-          Skill.belongsTo(models.skillCategory);
-          Skill.belongsToMany(models.employee, {through: models.employeeSkill, foreign_key: "skillId"});
-        }
-      }});
+      initialAutoIncrement: 100
+    }
+  );
   return Skill;
 };

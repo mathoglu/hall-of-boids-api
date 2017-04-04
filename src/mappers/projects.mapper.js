@@ -1,17 +1,18 @@
-var Promise = require('promise'),
+const Promise = require('promise'),
   Joi = require('joi'),
   json = '{ "_data": [] }',
   models = require('../models/index');
 
-var projectSchema = Joi.object().keys({
+const projectSchema = Joi.object().keys({
   id: Joi.number().required(),
+  employee_id: Joi.number().required(),
   client: Joi.string().required(),
   current: Joi.boolean(),
   description: Joi.string(),
   duration_from: Joi.date().timestamp('unix'),
   duration_to: Joi.date().timestamp('unix')
 });
-var projectsSchema = Joi.array().min(0).items(projectSchema);
+const projectsSchema = Joi.array().min(0).items(projectSchema);
 
 function _errorHandler(err, reject) {
   console.error(err.name, err.details);
@@ -43,12 +44,11 @@ function validateProjects(projects) {
 
 function projectsMapper(items) {
   if (Array.isArray(items)) {
-    var validatedProjects =  validateProjects(items);
-    validatedProjects = validatedProjects.map( function (project) {
-      project.duration_from = dateToUnixTimestamp(project.duration_from);
-      project.duration_to = dateToUnixTimestamp(project.duration_to);
-    });
-    return validatedProjects;
+    return validateProjects(items)
+      .map(project => {
+        project.duration_from = dateToUnixTimestamp(project.duration_from);
+        project.duration_to = dateToUnixTimestamp(project.duration_to);
+      });
   }
   else {
     return validateProject(items);

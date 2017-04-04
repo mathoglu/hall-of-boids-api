@@ -4,37 +4,50 @@ var Promise = require('promise'),
   models = require('../models/index');
 
 function list() {
-  var employeesPromise = models.employee.findAll(
-    {
-      include: [
-        {
-          model: models.employeeSkill,
-          include: [ models.skill ]
-        },
-        models.project
-      ]
+  let employeesPromise = models.employee.findAll()
+    .then(employees => {
+      return models.project.findAll().then(projects => {
+        return models.skill.findAll().then(skills => {
+          let res = mapSkillsAndProjectsToEmployees(employees, projects, skills);
+          return res;
+        })
+      })
     });
   return buildCardsPromiseFromEmployeesPromise(employeesPromise);
 }
 
-function get(id) {
-  var employeePromise = models.employee.findById(id,
-    {
-      include: [
-        {
-          model: models.employeeSkill,
-          include: [ models.skill ]
-        },
-        models.project
-      ]
-    }).then(function(employee) {
-      return [employee];
+function mapSkillsAndProjectsToEmployees(employees, projects, skills) {
+  return employees.map(employee => {
+    let employeeSkills = skills.filter(skill => {
+      return skill.dataValues.employee_id === parseInt(employee.dataValues.id, 10);
+    }).map(skill => skill.dataValues);
+
+    let employeeProjects = projects.filter(project => {
+      return project.dataValues.employee_id === parseInt(employee.dataValues.id, 10);
+    }).map(project => project.dataValues);
+
+    employee.dataValues.skills = employeeSkills;
+    employee.dataValues.projects = employeeProjects;
+    return employee;
   });
+}
+
+function get(id) {
+  let employeePromise = models.employee.findById(id).then(employee => {
+    return models.project.findAll({where: {employee_id: id}})
+      .then(projects => {
+        return models.skill.findAll({where: {employee_id: id}}).then(skills => {
+          employee.dataValues.skills = skills.map(skill => skill.dataValues);
+          employee.dataValues.projects = projects.map(skill=> skill.dataValues);
+          return [employee];
+        })
+      });
+    });
   return buildCardsPromiseFromEmployeesPromise(employeePromise);
 }
 
-function buildCardFromEmployee(employee) {
-  var card = {
+function buildCardFromEmployeeData(employee) {
+  let card = {
     id: employee.id,
     info: {
       firstname: employee.first_name,
@@ -45,26 +58,25 @@ function buildCardFromEmployee(employee) {
     motto: employee.motto,
     available: false,
     inProcess: false,
-    skills: employee.employeeSkills.map(function(employeeSkill) {
+    skills: employee.skills.map(skill => {
       return {
-        rank: employeeSkill.rank,
-        name: employeeSkill.skill.dataValues.name,
-        rating: employeeSkill.rating
-      }
+        name: skill.name,
+        rating: skill.rating,
+      };
     }),
-    projects: employee.projects.map(function(project) {
+    projects: employee.projects.map(project => {
       return {
         client: project.client,
         current: Date.now() > Date.parse(project.duration_from) && Date.now() < Date.parse(project.duration_to),
         description: project.description,
         duration: {
-          from: Date.parse(project.duration_from) / 1000,
-          to: Date.parse(project.duration_to) / 1000
+          from: Date.parse(project.duration_from),
+          to: Date.parse(project.duration_to)
         }
-      }
+      };
     })
   };
-  var hasCurrentProject = card.projects.some(function(project) {
+  let hasCurrentProject = card.projects.some(function(project) {
     return project.current;
   });
   card.available = !hasCurrentProject;
@@ -73,7 +85,7 @@ function buildCardFromEmployee(employee) {
 
 function buildCardPromiseFromEmployeePromise(employeePromise) {
   return employeePromise.then(function(employee) {
-    return buildCardFromEmployee(employee);
+    return buildCardFromEmployeeData(employee);
   }, function(err) {
     console.error(err);
   });
@@ -81,9 +93,9 @@ function buildCardPromiseFromEmployeePromise(employeePromise) {
 
 function buildCardsPromiseFromEmployeesPromise(employeesPromise) {
   return employeesPromise.then(function(employees) {
-    var cards = [];
-    for (var i = 0; i < employees.length; i++) {
-      cards.push(buildCardFromEmployee(employees[i].dataValues));
+    let cards = [];
+    for (let i = 0; i < employees.length; i++) {
+      cards.push(buildCardFromEmployeeData(employees[i].dataValues));
     }
     return Promise.all(cards);
   });
@@ -92,4 +104,4 @@ function buildCardsPromiseFromEmployeesPromise(employeesPromise) {
 module.exports = {
   list: list,
   get: get
-}
+};

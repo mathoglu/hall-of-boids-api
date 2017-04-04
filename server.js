@@ -10,16 +10,17 @@ var express = require('express'),
     skillsRouter = require('./src/routes/skills.routes'),
     port = process.env.PORT || 3333,
     passport = require('passport');
+const cors = require('cors');
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({ extended: false, limit: '50mb' }));
 
 app.use(morgan('dev'));
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-  res.header("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PUT");
+  res.header("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PUT, PATCH, DELETE");
   if(req.method === 'OPTIONS') {
       res.sendStatus(200);
       return;
@@ -27,10 +28,11 @@ app.use(function(req, res, next) {
   next();
 });
 
+
 app.use(passport.initialize());
 var passportAuthMethod = '';
 if (process.env.ENVIRONMENT === 'test') {
-  require('./src/auth/passport-mock-strategy')(passport);
+  require('./test/passport-mock-strategy')(passport);
   passportAuthMethod = 'mock';
 }
 else {
@@ -38,12 +40,22 @@ else {
   passportAuthMethod = 'jwt';
 }
 
+// app.options('*', cors());
+// app.use(cors({
+//   origin: 'http://127.0.0.1:8080',
+//   methods: 'GET,OPTIONS,HEAD,PUT,POST,PATCH,DELETE'
+// }));
+
 //app.use('/api', indexRouter);
 app.use('/api/auth', authRouter);
-app.use('/api/cards', passport.authenticate(passportAuthMethod, { session: false}), cardsRouter);
-app.use('/api/employees', passport.authenticate(passportAuthMethod, { session: false}), employeesRouter);
-app.use('/api/projects', passport.authenticate(passportAuthMethod, { session: false}), projectsRouter);
-app.use('/api/skills', passport.authenticate(passportAuthMethod, { session: false}), skillsRouter);
+app.use('/api/cards', cardsRouter);
+
+// app.use('/api/employees', passport.authenticate(passportAuthMethod, { session: false}), employeesRouter);
+app.use('/api/employees', employeesRouter);
+// app.use('/api/projects', passport.authenticate(passportAuthMethod, { session: false}), projectsRouter);
+app.use('/api/projects', projectsRouter);
+// app.use('/api/skills', passport.authenticate(passportAuthMethod, { session: false}), skillsRouter);
+app.use('/api/skills', skillsRouter);
 
 var server = app.listen(port);
 require('util').log('Library hosted on port ' + port);

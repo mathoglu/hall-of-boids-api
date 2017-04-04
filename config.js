@@ -14,5 +14,8 @@ module.exports = {
     'password': 'daadirlandirlandaa'
   },
   'ssl_keyfile': '',
-  'ssl_certfile': ''
+  'ssl_certfile': '',
+  passport_auth: {
+    secret_key: '06459a0ac9bcd9d425e21ce111b596122dd1225c09d3c7aa52a59e8851cd919c'
+  }
 };

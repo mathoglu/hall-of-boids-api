@@ -19,9 +19,9 @@ router.route('/')
     );
   });
 
-router.route('/:skill_id')
+router.route('/:employee_id')
   .get(function(req,res) {
-    skillsController.get(req.params.skill_id).then(
+    skillsController.get(req.params.employee_id).then(
       function (skill) {
         res.json(responseMapper(skill));
       },
@@ -31,16 +31,42 @@ router.route('/:skill_id')
     );
   });
 
-router.route('/:skill_id')
-  .patch(function(req, res) {
-    skillsController.patch(req.params.skill_id, req.body).then(
-      function (skill) {
-        res.json(responseMapper(skill));
+router.route('/')
+  .post(function(req,res) {
+    skillsController.post(req.body).then(
+      function(skillId) {
+        res.json(responseMapper(skillId));
       },
-      function(err) {
+      function (err) {
         _errorHandler(err, res, req);
       }
     )
+  });
+
+router.route('/:skill_id')
+  .patch(function(req, res) {
+    skillsController.patch(req.params.skill_id, req.body)
+      .then(
+        function (skill) {
+          res.json(responseMapper(skill));
+        },
+        function(err) {
+          _errorHandler(err, res, req);
+        }
+      );
+  });
+
+router.route('/:skill_id')
+  .delete(function(req, res) {
+    skillsController.remove(req.params.skillId)
+      .then(
+        data => {
+          res.json(responseMapper(data));
+        },
+        err => {
+          _errorHandler(err, res, req);
+        }
+      )
   });
 
 module.exports = router;

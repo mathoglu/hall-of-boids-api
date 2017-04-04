@@ -4,16 +4,7 @@ var Promise = require('promise'),
   models = require('../models/index');
 
 function list() {
-  var employeesPromise = models.employee.findAll(
-    {
-      include: [
-        {
-          model: models.employeeSkill,
-          include: [ models.skill ]
-        },
-        models.project
-      ]
-    });
+  let employeesPromise = models.employee.findAll();
   return employeesPromise.then(function(employees) {
     return employees.map(function(employee) {
       return employee.dataValues;
@@ -22,23 +13,14 @@ function list() {
 }
 
 function get(id) {
-  var employeePromise = models.employee.findById(id,
-    {
-      include: [
-        {
-          model: models.employeeSkill,
-          include: [ models.skill ]
-        },
-        models.project
-      ]
-    });
+  let employeePromise = models.employee.findById(id);
   return employeePromise.then( function (employee) {
     return employee.dataValues;
   });
 }
 
 function post(employee) {
-  var employeeCreatePromise = models.employee.findOrCreate(
+  let employeeCreatePromise = models.employee.findOrCreate(
     {
       where: {
         first_name: employee.first_name,

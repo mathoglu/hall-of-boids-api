@@ -14,10 +14,10 @@ function list() {
     });
 }
 
-function get(id) {
-  return models.skill.findById(id)
-    .then( function (skill) {
-      return skill;
+function get(employee_id) {
+  return models.skill.findAll({where: {employee_id: employee_id}})
+    .then( function (skills) {
+      return skills;
     },
     function(err) {
       console.error(err);
@@ -25,13 +25,14 @@ function get(id) {
 }
 
 function post(skill) {
-  var skillCreatePromise = models.employee.findOrCreate(
+  var skillCreatePromise = models.skill.findOrCreate(
     {
       where: {
         name: skill.name
       },
       defaults: skill
-    });
+    }
+  ).catch(err => console.error(err));
   return skillCreatePromise.then(function(skill) {
     return skill[0].dataValues.id;
   });
@@ -51,11 +52,13 @@ function patch(skillId, skillData) {
 }
 
 function remove(skillId) {
-  return models.project.destroy({where: {skillId: skillId}}).then(
-    function() {
+  return models.project.destroy({where: {id: skillId}}).then(
+    function(rowsRemoved) {
+      return rowsRemoved;
     },
     function(err) {
       console.error(err);
+      return err;
     }
   )
 }

@@ -2,16 +2,20 @@ var fs = require('fs');
 var path = require("path");
 var Sequelize = require('sequelize');
 var config = require('../../config');
-var sequelize = new Sequelize(config.database.name,
-  config.database.user,
-  config.database.password,
-  {dialect: config.database.dialect});
+
+var sequelize;
 
 if (process.env.ENVIRONMENT === 'test') {
   sequelize = new Sequelize(config.test_database.name,
   config.test_database.user,
   config.test_database.password,
     {dialect: config.test_database.dialect});
+}
+else {
+  sequelize = new Sequelize(config.database.name,
+    config.database.user,
+    config.database.password,
+    {dialect: config.database.dialect});
 }
 
 var db = {};
@@ -39,8 +43,7 @@ if (process.env.ENVIRONMENT === 'development') {
     var files = [
       'fixtures/static_data/employees.json',
       'fixtures/static_data/projects.json',
-      'fixtures/static_data/skills.json',
-      'fixtures/static_data/employee_skills.json'
+      'fixtures/static_data/skills.json'
     ];
     sequelizeFixtures.loadFiles(files, db).then(function () {
       console.log("Fixtures loaded");
@@ -49,7 +52,7 @@ if (process.env.ENVIRONMENT === 'development') {
         for (var i = 0; i < dataArray.length; i++) {
           var id = dataArray[i].employee_id;
           var b64data = dataArray[i].data;
-          db.employee.update({image: b64data}, {where: {id: id}}).then(function() {
+          db.employee.update({image: b64data}, {where: {id: id}, logging: false}).then(function() {
             console.log("Image uploaded to database");
           }).catch(function(err) {
             console.error("Error loading image to database");
