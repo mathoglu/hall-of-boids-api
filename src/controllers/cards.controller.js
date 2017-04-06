@@ -12,7 +12,8 @@ function list() {
           return res;
         })
       })
-    });
+    })
+    .catch(err => console.error(err));
   return buildCardsPromiseFromEmployeesPromise(employeesPromise);
 }
 
@@ -33,7 +34,8 @@ function mapSkillsAndProjectsToEmployees(employees, projects, skills) {
 }
 
 function get(id) {
-  let employeePromise = models.employee.findById(id).then(employee => {
+  let employeePromise = models.employee.findById(id)
+    .then(employee => {
     return models.project.findAll({where: {employee_id: id}})
       .then(projects => {
         return models.skill.findAll({where: {employee_id: id}}).then(skills => {
@@ -42,7 +44,8 @@ function get(id) {
           return [employee];
         })
       });
-    });
+    })
+    .catch(err => console.error(err));
   return buildCardsPromiseFromEmployeesPromise(employeePromise);
 }
 

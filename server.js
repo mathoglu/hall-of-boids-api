@@ -1,3 +1,4 @@
+require('dotenv').config()
 var config = require('./config');
 var express = require('express'),
     morgan = require('morgan'),
@@ -12,10 +13,26 @@ var express = require('express'),
     passport = require('passport');
 const cors = require('cors');
 
+console.log(process.env.whitelist.split(','));
+console.log();
+function ipInWhitelist(req, res, next) {
+  const whitelist = process.env.whitelist.split(',');
+  const requestIp = req.header('x-forwarded-for');
+  console.log(requestIp);
+  if (whitelist.includes(requestIp)) {
+    next();
+  }
+  else {
+    console.error(`Request received from ${requestIp} which is not on whitelist`)
+  }
+}
+
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({ extended: false, limit: '50mb' }));
 
 app.use(morgan('dev'));
+
+app.use(ipInWhitelist);
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -29,7 +46,6 @@ app.use(function(req, res, next) {
 });
 
 
-app.use(passport.initialize());
 var passportAuthMethod = '';
 if (process.env.ENVIRONMENT === 'test') {
   require('./test/passport-mock-strategy')(passport);
