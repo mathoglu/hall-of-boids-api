@@ -12,10 +12,15 @@ if (process.env.ENVIRONMENT === 'test') {
     {dialect: config.test_database.dialect});
 }
 else {
-  sequelize = new Sequelize(config.database.name,
-    config.database.user,
-    config.database.password,
-    {dialect: config.database.dialect});
+  if (process.env.DATABASE_URL) {
+    sequelize = new Sequelize(process.env.DATABASE_URL, {dialect: config.database.dialect});
+  }
+  else {
+    sequelize = new Sequelize(config.database.name,
+      config.database.user,
+      config.database.password,
+      {dialect: config.database.dialect});
+  }
 }
 
 var db = {};
