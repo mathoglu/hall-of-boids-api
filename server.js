@@ -17,7 +17,7 @@ console.log(process.env.whitelist.split(','));
 console.log();
 function ipInWhitelist(req, res, next) {
   const whitelist = process.env.whitelist.split(',');
-  const requestIp = req.ip.split(':').pop();
+  const requestIp = req.header('x-forwarded-for');
   console.log(requestIp);
   if (whitelist.includes(requestIp)) {
     next();
