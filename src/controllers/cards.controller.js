@@ -17,6 +17,14 @@ function list() {
   return buildCardsPromiseFromEmployeesPromise(employeesPromise);
 }
 
+function listIds() {
+  let idsPromise = models.employee.findAll({ attributes: ['id']});
+  return idsPromise.then((idRecords) => {
+    let ids = idRecords.map((r) => r.dataValues.id).sort((a,b) => a-b);
+    return ids;
+  })
+}
+
 function mapSkillsAndProjectsToEmployees(employees, projects, skills) {
   return employees.map(employee => {
     let employeeSkills = skills.filter(skill => {
@@ -96,15 +104,21 @@ function buildCardPromiseFromEmployeePromise(employeePromise) {
 
 function buildCardsPromiseFromEmployeesPromise(employeesPromise) {
   return employeesPromise.then(function(employees) {
-    let cards = [];
-    for (let i = 0; i < employees.length; i++) {
-      cards.push(buildCardFromEmployeeData(employees[i].dataValues));
+    if (!employees) {
+      return null;
     }
-    return Promise.all(cards);
+    else {
+      let cards = [];
+      for (let i = 0; i < employees.length; i++) {
+        cards.push(buildCardFromEmployeeData(employees[i].dataValues));
+      }
+      return Promise.all(cards);
+    }
   });
 }
 
 module.exports = {
   list: list,
+  listIds: listIds,
   get: get
 };

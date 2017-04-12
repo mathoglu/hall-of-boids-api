@@ -9,14 +9,26 @@ function _errorHandler(err, res, req) {
 
 router.route('/')
   .get(function(req,res) {
-    cardsController.list().then(
-      function(cards) {
-        res.json(responseMapper(cards));
-      },
-      function(err) {
-        _errorHandler(err, res, req);
-      }
-    );
+    if (req.query.onlyIds !== 'true') {
+      cardsController.list().then(
+        function (cards) {
+          res.json(responseMapper(cards));
+        },
+        function (err) {
+          _errorHandler(err, res, req);
+        }
+      );
+    }
+    else {
+      cardsController.listIds().then(
+        (ids) => {
+          res.json(responseMapper(ids));
+        },
+        (err) => {
+          _errorHandler(err, res, req);
+        }
+      )
+    }
   });
 
 router.route('/:card_id')
