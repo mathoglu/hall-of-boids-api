@@ -3,7 +3,7 @@
 module.exports = function (sequelize, DataTypes) {
   var Project = sequelize.define('project', {
     id: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
       unique: true,
