@@ -44,14 +44,17 @@ function mapSkillsAndProjectsToEmployees(employees, projects, skills) {
 function get(id) {
   let employeePromise = models.employee.findById(id)
     .then(employee => {
-    return models.project.findAll({where: {employee_id: id}})
-      .then(projects => {
-        return models.skill.findAll({where: {employee_id: id}}).then(skills => {
-          employee.dataValues.skills = skills.map(skill => skill.dataValues);
-          employee.dataValues.projects = projects.map(skill=> skill.dataValues);
-          return [employee];
-        })
-      });
+      if (!employee) {
+        return Promise.resolve(null);
+      }
+      return models.project.findAll({where: {employee_id: id}})
+        .then(projects => {
+          return models.skill.findAll({where: {employee_id: id}}).then(skills => {
+            employee.dataValues.skills = skills.map(skill => skill.dataValues);
+            employee.dataValues.projects = projects.map(skill=> skill.dataValues);
+            return [employee];
+          })
+        });
     })
     .catch(err => console.error(err));
   return buildCardsPromiseFromEmployeesPromise(employeePromise);

@@ -35,7 +35,12 @@ router.route('/:card_id')
   .get(function(req,res) {
     cardsController.get(req.params.card_id).then(
       function(card) {
-        res.json(responseMapper(card));
+        if (!card) {
+          res.status(404);
+        }
+        else {
+          res.json(responseMapper(card));
+        }
       },
       function(err) {
         _errorHandler(err, res, req);
