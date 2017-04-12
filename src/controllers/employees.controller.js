@@ -51,15 +51,17 @@ function patch(employeeId, employeeData) {
 function remove(employeeId) {
   // first destroy the employee skill instances for the employee
   // before destroying the employee instance
-  return models.employeeSkill.destroy({where: {employeeId: employeeId}}).then(function() {
-    return models.employee.destroy({where: {id: employeeId}}).then(
-      function () {
-        console.log("destroyed");
-      },
-      function (err) {
-        console.error(err);
-      }
-    )
+  return models.skill.destroy({where: {employee_id: employeeId}}).then(() => {
+    return models.project.destroy({where: {employee_id: employeeId}}).then(() => {
+      return models.employee.destroy({where: {id: employeeId}}).then(
+        function () {
+          console.log("destroyed");
+        },
+        function (err) {
+          console.error(err);
+        }
+      )
+    })
   },
   function(err) {
     console.error(err);
