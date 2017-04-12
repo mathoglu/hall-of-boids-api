@@ -9,8 +9,7 @@ var express = require('express'),
     employeesRouter = require('./src/routes/employees.routes'),
     projectsRouter = require('./src/routes/projects.routes'),
     skillsRouter = require('./src/routes/skills.routes'),
-    port = process.env.PORT || 3333,
-    passport = require('passport');
+    port = process.env.PORT || 3333;
 const cors = require('cors');
 
 console.log(process.env.whitelist.split(','));
@@ -45,17 +44,6 @@ app.use(function(req, res, next) {
   next();
 });
 
-
-var passportAuthMethod = '';
-if (process.env.ENVIRONMENT === 'test') {
-  require('./test/passport-mock-strategy')(passport);
-  passportAuthMethod = 'mock';
-}
-else {
-  require('./src/auth/passport-strategy')(passport);
-  passportAuthMethod = 'jwt';
-}
-
 // app.options('*', cors());
 // app.use(cors({
 //   origin: 'http://127.0.0.1:8080',
@@ -66,11 +54,8 @@ else {
 app.use('/api/auth', authRouter);
 app.use('/api/cards', cardsRouter);
 
-// app.use('/api/employees', passport.authenticate(passportAuthMethod, { session: false}), employeesRouter);
 app.use('/api/employees', employeesRouter);
-// app.use('/api/projects', passport.authenticate(passportAuthMethod, { session: false}), projectsRouter);
 app.use('/api/projects', projectsRouter);
-// app.use('/api/skills', passport.authenticate(passportAuthMethod, { session: false}), skillsRouter);
 app.use('/api/skills', skillsRouter);
 
 var server = app.listen(port);
