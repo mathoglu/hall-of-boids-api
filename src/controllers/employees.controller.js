@@ -27,7 +27,8 @@ function post(employee) {
         last_name: employee.last_name
       },
       defaults: employee
-    });
+    })
+    .catch(err => console.error(err));
   return employeeCreatePromise.then(function(employee) {
     return employee[0].dataValues.id;
   })
