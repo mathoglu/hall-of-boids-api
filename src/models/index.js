@@ -12,7 +12,7 @@ if (process.env.ENVIRONMENT === 'test') {
     {dialect: config.test_database.dialect});
 }
 else {
-  if (process.env.DATABASE_URL) {
+  if (process.env.DATABASE_URL && process.env.ENVIRONMENT === 'production') {
     sequelize = new Sequelize(process.env.DATABASE_URL, {dialect: config.database.dialect});
   }
   else {
